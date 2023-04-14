@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.LinkedList;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,6 +10,8 @@ public class Main {
         Scanner in = new Scanner(System.in);
 
         String politica = setPolitica(in);
+
+        LinkedList<Processo> filaDeProcessos = new LinkedList<>();
         
         boolean next = true;
         do {
@@ -23,7 +26,15 @@ public class Main {
                 simNao = in.nextLine().toLowerCase();
             }
             next = simNao.equals("s") || simNao.equals("sim");
+            filaDeProcessos.add(new Processo(process, Estado.READY, instante));
         } while (next);
+
+        Escalonador escalonador;
+        if (politica.equals("rr")) {
+          escalonador = new RoundRobinSemPrioridade(filaDeProcessos);
+        } else {
+          escalonador = new EscalonadorSimples(filaDeProcessos);
+        }
     }
 
     public String setPolitica(Scanner in) {

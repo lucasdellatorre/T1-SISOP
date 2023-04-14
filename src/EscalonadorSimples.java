@@ -27,9 +27,9 @@ public class EscalonadorSimples extends Escalonador {
 
     private HashMap<Processo, MemTuple> memory;
     
-    public EscalonadorSimples() {
+    public EscalonadorSimples(LinkedList<Processo> readyQueue) {
+        this.readyQueue = readyQueue; 
         this.blockedQueue = new LinkedList<>();
-        this.readyQueue = new LinkedList<>();
         this.running = null;
     }
 

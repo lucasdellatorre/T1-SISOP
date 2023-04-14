@@ -74,4 +74,7 @@ public class Processo {
     this.blockedTime = newBlockedTime;
   }
 
+  public String toString() {
+    return "pid: " + this.pid + " | state: " + this.estado + " | startTime: " + this.startTime;
+  }
 }

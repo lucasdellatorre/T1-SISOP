@@ -14,9 +14,8 @@ public class LeituraDaEntrada {
     String[] vetor;
 
     public LeituraDaEntrada() {
-        leArquivo(Paths.get("src/examples/prog1.asm"));
+        leArquivo(Paths.get("./examples/prog1.asm"));
     }
-
 
     public void leArquivo(Path path) {
         try (BufferedReader br = Files.newBufferedReader(path, Charset.defaultCharset())) {
@@ -28,7 +27,6 @@ public class LeituraDaEntrada {
                 for(String s : fields)
                     instrucoes.add(s);
                 line = br.readLine();
-
             }
 
         } catch (IOException e) {
