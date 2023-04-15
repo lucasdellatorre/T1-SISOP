@@ -17,9 +17,9 @@ public class Processo {
     private HashMap<String, Integer> data;
     private HashMap<String, Integer> labels;
 
-    public Processo(String pid, Estado estado, int startTime, File file) {
+    public Processo(String pid, int startTime, File file) {
         this.pid = pid;
-        this.estado = estado;
+        this.estado = Estado.READY;
         this.acc = 0;
         this.pc = 0;
         this.startTime = startTime;
@@ -30,9 +30,9 @@ public class Processo {
         leArquivo(file);
     }
 
-    public Processo(String pid, Estado estado, int startTime, int quantum, int priority, File file) {
+    public Processo(String pid, int startTime, int quantum, int priority, File file) {
         this.pid = pid;
-        this.estado = estado;
+        this.estado = Estado.READY;
         this.acc = 0;
         this.pc = 0;
         this.startTime = startTime;
@@ -65,7 +65,7 @@ public class Processo {
         int endDataPos = file.indexOf(".enddata");
 
         for (int i = startDataPos+1; i<endDataPos; i++) {
-            String[] line = file.get(i).split(" ");
+            String[] line = file.get(i).split("\\s+");
             // Util.printArray(line);
             String var = line[0];
             int value = Integer.parseInt(line[1]);
@@ -82,7 +82,7 @@ public class Processo {
         
         int pc = 0;
         for (int i = startDataPos+1; i<endDataPos; i++) {
-            String[] line = file.get(i).split(" ");
+            String[] line = file.get(i).split("\\s+");
             int isLabel = 0;
             
             if (line[0].endsWith(":")) {
@@ -104,7 +104,11 @@ public class Processo {
     public String[] getInstrucao(int pos) {
         return this.instrucoes.get(pos);
     }
-    
+
+    public int getIntuctionsSize() {
+        return this.instrucoes.size();
+    }
+
     public int getLabel(String label) {
         return this.labels.get(label);
     }
@@ -123,6 +127,10 @@ public class Processo {
 
     public Estado getEstado() {
         return estado;
+    }
+
+    public void setEstado(Estado estado) {
+        this.estado = estado;
     }
 
     public int getAcc() {
