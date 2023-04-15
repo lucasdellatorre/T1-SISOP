@@ -1,5 +1,6 @@
-import java.util.Scanner;
 import java.util.LinkedList;
+import java.util.Scanner;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,35 +8,86 @@ public class Main {
     }
     
     public void run() {
-        Scanner in = new Scanner(System.in);
-
-        String politica = setPolitica(in);
-
-        LinkedList<Processo> filaDeProcessos = new LinkedList<>();
+        Processo p1 = new Processo("1", 3, new File("src/examples/prog1.asm"));
+        Processo p2 = new Processo("2", 0, new File("src/examples/prog2.asm"));
+        Processo p3 = new Processo("3", 0, new File("src/examples/prog3.asm"));
         
-        boolean next = true;
-        do {
-            System.out.print("Adicione o nome do arquivo que contem o processo: ");
-            String process = in.nextLine();
-            System.out.print("Qual o instante de tempo em que ele chega: ");
-            int instante = leInteiro(in);        
-            System.out.print("Voce gostaria de adicionar mais um arquivo (S/N): "); 
-            String simNao = in.nextLine().toLowerCase();
-            while (!validaSimENao(simNao)) {
-                System.out.print("String invalida, digite apenas S ou N.");
-                simNao = in.nextLine().toLowerCase();
-            }
-            next = simNao.equals("s") || simNao.equals("sim");
-            filaDeProcessos.add(new Processo(process, Estado.READY, instante));
-        } while (next);
+        Escalonador s;
 
-        Escalonador escalonador;
-        if (politica.equals("rr")) {
-          escalonador = new RoundRobinSemPrioridade(filaDeProcessos);
-        } else {
-          escalonador = new EscalonadorSimples(filaDeProcessos);
-        }
+        LinkedList<Processo> ll = new LinkedList<Processo>();
+        ll.add(p1);
+        ll.add(p2);
+        ll.add(p3);
+
+        s = new EscalonadorSJF(ll);
+
+        s.run();
+        
+        // Scanner in = new Scanner(System.in);
+        
+        // String politica = setPolitica(in);
+        
+        // LinkedList<Processo> filaDeProcessos = new LinkedList<>();
+
+        // System.out.println("***************************************************************");
+        // System.out.println("            Bem vindo ao Simulador de Escalonamento. ");
+        // System.out.println("***************************************************************");
+
+
+        // boolean next = true;
+        // do  {
+        //     try {
+        //         System.out.println("");
+        //         System.out.println("Opções: ");
+        //         System.out.println("");
+        //         System.out.println("[0] Sair.");
+        //         System.out.println("[1] Escalonar processos utilizando a política de SJF");
+        //         System.out.println("[2] Escalonar processos utilizando a política de Round-Robin");
+        //         System.out.println("");
+        //         System.out.print("Digite a opção desejada: ");
+        //         int opcao = sc.next().charAt(0);
+        //         sc.nextLine();
+        //         switch (opcao) {
+        //             case '1':
+        //                 System.out.println("Digite o quantum: ");
+        //                 int quantum = sc.nextInt();
+        //                 roundRobinCP.setQuantum(quantum);
+
+        //                 System.out.println("Digite o caminho do arquivo: ");
+        //                 caminho = sc2.nextLine();
+
+
+        //                 System.out.println("Digite a prioridade sendo: 1 Alta - 2 Média - 3 Baixa");
+        //                 int prioridade = sc.nextInt();
+
+        //                 System.out.println("Digite o tempo de chegada: ");
+        //                 int tempoChegada = sc.nextInt();
+
+
+        //                 break;
+        //             case '2':
+        //                 System.out.println("Escolheu 2");
+        //                 break;
+        //             case '3':
+        //                 System.out.println("Escolheu 3");
+        //                 break;
+        //             case '0':
+        //                 next = false;
+        //                 break;
+        //             default:
+        //                 System.out.println("Opcao invalida! Redigite. ");
+        //         }
+
+        //     } catch (InputMismatchException e) {
+        //         System.out.println("Erro: Insira apenas números inteiros. ");
+        //     } catch (Exception e) {
+        //         System.out.println(e.getMessage());
+        //     }
+        // } while(next);
+
+        // System.out.println("Até breve.");
     }
+
 
     public String setPolitica(Scanner in) {
         System.out.print("Qual politica de escalonamento voce gostaria de usar (RR ou SJF): ");
