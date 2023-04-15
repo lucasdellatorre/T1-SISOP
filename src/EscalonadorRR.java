@@ -20,6 +20,8 @@ public class EscalonadorRR extends Escalonador {
 
   @Override
   int run() {
+
+    return 1;
     // implementar lógica round-robin
   }
 }
