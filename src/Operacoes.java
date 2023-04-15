@@ -1,0 +1,3 @@
+public enum Operacoes {
+    ADD, SUB, MULT, DIV, LOAD, STORE, BRANY, BRPOS, BRZERO, BRNEG, SYSCALL
+}
