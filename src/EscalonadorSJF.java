@@ -16,7 +16,6 @@ public class EscalonadorSJF extends Escalonador {
     private LinkedList<Processo> readyQueue;
     private LinkedList<Processo> notStartedQueue;
     private Processo runningProcess;
-
     private Parser parser;
 
     public EscalonadorSJF(LinkedList<Processo> processes) {
@@ -48,6 +47,7 @@ public class EscalonadorSJF extends Escalonador {
                 if (process.getBlockedTime() == 0) {
                     readyQueue.add(process);
                     aux.remove(process);
+                    process.setEstado(Estado.READY);
                 }
             }
 
@@ -55,7 +55,6 @@ public class EscalonadorSJF extends Escalonador {
             // Util.printList(notStartedQueue);
             // Util.printList(blockedQueue);
             // System.out.println("-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-
 
             this.blockedQueue = new LinkedList<>(aux);
             this.readyQueue = sortProcessesBySize(readyQueue);
@@ -69,7 +68,6 @@ public class EscalonadorSJF extends Escalonador {
             // System.out.println("===============================");
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
-                
                 int firstTime = Integer.MAX_VALUE;
                 if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getIntuctionsSize();
 
@@ -78,12 +76,10 @@ public class EscalonadorSJF extends Escalonador {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);
                     }
-
                     this.runningProcess = this.readyQueue.getFirst();
                     this.readyQueue.pop();
                     this.runningProcess.setEstado(Estado.RUNNING);
                     parser.setProcess(this.runningProcess);
-
                 }
 
                 System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
@@ -102,9 +98,7 @@ public class EscalonadorSJF extends Escalonador {
                     this.runningProcess = null;
                 }
             }
-
             time++;
-
         }
         return 0;
     }

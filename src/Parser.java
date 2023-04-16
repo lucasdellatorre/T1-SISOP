@@ -1,7 +1,6 @@
 import java.util.Scanner;
 
 public class Parser {
-    
     private Processo process;
     private Scanner scan;
 

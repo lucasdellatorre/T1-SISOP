@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 public class Processo {
-    private String pid;
+    private static int pidCounter = 0;
+
+    private int pid;
+    private int turnarround;
+    private int processingTime;
+    private int waitingTime;
     private int acc;
     private int pc;
     private int startTime;
@@ -17,8 +22,8 @@ public class Processo {
     private HashMap<String, Integer> data;
     private HashMap<String, Integer> labels;
 
-    public Processo(String pid, int startTime, File file) {
-        this.pid = pid;
+    public Processo(int startTime, File file) {
+        this.pid = pidCounter++;
         this.estado = Estado.READY;
         this.acc = 0;
         this.pc = 0;
@@ -26,12 +31,13 @@ public class Processo {
         this.quantum = -1;
         this.priority = -1;
         this.blockedTime = 0;
-
+        this.turnarround = 0;
+        this.processingTime = 0;
+        this.waitingTime = 0;
         leArquivo(file);
     }
 
-    public Processo(String pid, int startTime, int quantum, int priority, File file) {
-        this.pid = pid;
+    public Processo(int startTime, int quantum, int priority, File file) {
         this.estado = Estado.READY;
         this.acc = 0;
         this.pc = 0;
@@ -39,10 +45,13 @@ public class Processo {
         this.quantum = quantum;
         this.priority = priority;
         this.blockedTime = 0;
+        this.turnarround = 0;
+        this.processingTime = 0;
+        this.waitingTime = 0;
+        leArquivo(file);
     }
 
     private void leArquivo(File file) {
-        
         ArrayList<String> memory = new ArrayList<String>();
         try (Scanner reader = new Scanner(file)) {
             while (reader.hasNextLine()) {
@@ -102,6 +111,7 @@ public class Processo {
     }
 
     public String[] getInstrucao(int pos) {
+        // Util.printList(instrucoes);
         return this.instrucoes.get(pos);
     }
 
@@ -121,8 +131,8 @@ public class Processo {
         this.data.put(var, value);
     }
 
-    public String getPid() {
-        return pid;
+    public int getPid() {
+        return this.pid;
     }
 
     public Estado getEstado() {
@@ -169,6 +179,30 @@ public class Processo {
         this.blockedTime = newBlockedTime;
     }
 
+    public int getTurnarround() {
+        return this.turnarround;
+    }
+    
+    public int getWaitingTime() {
+        return this.waitingTime;
+    }
+    
+    public int getProcessingTime() {
+        return this.processingTime;
+    }
+
+    public void setTurnarround(int time) {
+        this.turnarround = time; 
+    }
+
+    public void setWaitingTime() {
+        this.waitingTime++; 
+    }
+    
+    public void setProcessingTime() {
+        this.processingTime++; 
+    }
+    
     public String toString() {
         return "pid: " + this.pid + " | state: " + this.estado + " | startTime: " + this.startTime;
     }
