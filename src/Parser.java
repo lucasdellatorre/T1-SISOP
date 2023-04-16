@@ -80,6 +80,7 @@ public class Parser {
                     System.out.println("SYSCALL 1 -> " + acc);
                     return 1;
                 } else if (val == 2) {
+                    System.out.print("SYSCALL 2: ");
                     process.setAcc(Integer.parseInt(scan.nextLine()));
                     return 1;
                 }

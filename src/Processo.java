@@ -167,6 +167,10 @@ public class Processo {
         return quantum;
     }
 
+    public void setQuantum(int quantum) {
+        this.quantum = quantum;
+    }
+
     public int getPriority() {
         return priority;
     }
@@ -201,6 +205,10 @@ public class Processo {
     
     public void setProcessingTime() {
         this.processingTime++; 
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
     
     public String toString() {
