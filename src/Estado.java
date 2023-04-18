@@ -2,5 +2,6 @@ public enum Estado {
     RUNNING,
     BLOCKED,
     READY,
-    FINISHED
+    FINISHED,
+    NOT_STARTED
 }

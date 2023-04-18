@@ -24,7 +24,7 @@ public class Processo {
 
     public Processo(int startTime, File file) {
         this.pid = pidCounter++;
-        this.estado = Estado.READY;
+        this.estado = Estado.NOT_STARTED;
         this.acc = 0;
         this.pc = 0;
         this.startTime = startTime;
@@ -38,7 +38,7 @@ public class Processo {
     }
 
     public Processo(int startTime, int quantum, int priority, File file) {
-        this.estado = Estado.READY;
+        this.estado = Estado.NOT_STARTED;
         this.acc = 0;
         this.pc = 0;
         this.startTime = startTime;
