@@ -50,6 +50,14 @@ public class Main {
                 new EscalonadorSJF(ll).run();
             }
             System.out.println("Finalizado!");
+            for (Processo process : ll) {
+                System.out.println("\n===============================");
+                System.out.println(process);
+                System.out.println("Waiting Time: " + process.getWaitingTime());
+                System.out.println("Processing Time: " + process.getProcessingTime());
+                System.out.println("Turnaround Time: " + process.getTurnarround());
+                System.out.println("===============================\n");
+            }
             System.out.println("Gostaria de rodar novamente?: (s/n)");
             String simNao = in.nextLine().toLowerCase();
             while (!validaSimENao(simNao)) {
