@@ -15,12 +15,14 @@ public class EscalonadorSJF extends Escalonador {
     private LinkedList<Processo> blockedQueue;
     private LinkedList<Processo> readyQueue;
     private LinkedList<Processo> notStartedQueue;
+    private LinkedList<Processo> finishedQueue;
     private Processo runningProcess;
     private Parser parser;
 
     public EscalonadorSJF(LinkedList<Processo> processes) {
         this.readyQueue = new LinkedList<>();
         this.blockedQueue = new LinkedList<>();
+        this.finishedQueue = new LinkedList<>();
         this.notStartedQueue = processes;
         this.runningProcess = null;
         this.parser = new Parser(null);
@@ -76,6 +78,8 @@ public class EscalonadorSJF extends Escalonador {
                 Util.printList(this.blockedQueue);
                 System.out.println("===============================\nNot Started Queue:");
                 Util.printList(this.notStartedQueue);
+                System.out.println("===============================\nFinished Queue:");
+                Util.printList(this.finishedQueue);
                 System.out.println("===============================");
                 System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
                 System.out.println("===============================\n\n");
@@ -86,6 +90,7 @@ public class EscalonadorSJF extends Escalonador {
                     // System.out.println("Entrei no -1");
                     this.runningProcess.setEstado(Estado.FINISHED);
                     this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
+                    this.finishedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                 } else if (status == 1) {
                     // System.out.println("Entrei no 1");
