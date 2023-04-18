@@ -41,6 +41,7 @@ public class EscalonadorRR extends Escalonador {
                 if (process.getStartTime() == time) {
                     readyQueue.add(process);
                     aux.remove(process);
+                    process.setEstado(Estado.READY);
                 }
             }
 
@@ -102,7 +103,7 @@ public class EscalonadorRR extends Escalonador {
                 if (status == -1) {
                     // System.out.println("Entrei no -1");
                     this.runningProcess.setEstado(Estado.FINISHED);
-                    this.runningProcess.setTurnarround(time - this.runningProcess.getStartTime());
+                    this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
                     this.runningProcess = null;
                     quantumTime = 0;
                 } else if (status == 1) {
@@ -110,6 +111,8 @@ public class EscalonadorRR extends Escalonador {
                     this.runningProcess.setEstado(Estado.BLOCKED);
                     Random random = new Random();
                     this.runningProcess.setBlockedTime(random.nextInt(3) + 8);
+                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: " + this.runningProcess.getBlockedTime());
+                    System.out.println();
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                     quantumTime = 0;
