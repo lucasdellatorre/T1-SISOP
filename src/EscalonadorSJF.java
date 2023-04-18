@@ -36,6 +36,7 @@ public class EscalonadorSJF extends Escalonador {
                 if (process.getStartTime() == time) {
                     readyQueue.add(process);
                     aux.remove(process);
+                    process.setEstado(Estado.READY);
                 }
             }
             this.notStartedQueue = new LinkedList<>(aux);
@@ -51,21 +52,8 @@ public class EscalonadorSJF extends Escalonador {
                 }
             }
 
-            // System.out.println("-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-            // Util.printList(notStartedQueue);
-            // Util.printList(blockedQueue);
-            // System.out.println("-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-
             this.blockedQueue = new LinkedList<>(aux);
             this.readyQueue = sortProcessesBySize(readyQueue);
-            
-            // System.out.println("===============================\nReady Queue: ");
-            // Util.printList(this.readyQueue);
-            // System.out.println("===============================\nBlocked Queue: ");
-            // Util.printList(this.blockedQueue);
-            // System.out.println("===============================\nNot Started Queue:");
-            // Util.printList(this.notStartedQueue);
-            // System.out.println("===============================");
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstTime = Integer.MAX_VALUE;
@@ -82,22 +70,39 @@ public class EscalonadorSJF extends Escalonador {
                     parser.setProcess(this.runningProcess);
                 }
 
+                System.out.println("===============================\nReady Queue: ");
+                Util.printList(this.readyQueue);
+                System.out.println("===============================\nBlocked Queue: ");
+                Util.printList(this.blockedQueue);
+                System.out.println("===============================\nNot Started Queue:");
+                Util.printList(this.notStartedQueue);
+                System.out.println("===============================");
                 System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
+                System.out.println("===============================\n\n");
                 int status = parser.parseNextLine();
+                this.runningProcess.setProcessingTime();
                 // System.out.println("Status: " + status);
                 if (status == -1) {
                     // System.out.println("Entrei no -1");
                     this.runningProcess.setEstado(Estado.FINISHED);
+                    this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
                     this.runningProcess = null;
                 } else if (status == 1) {
                     // System.out.println("Entrei no 1");
                     this.runningProcess.setEstado(Estado.BLOCKED);
                     Random random = new Random();
                     this.runningProcess.setBlockedTime(random.nextInt(3) + 8);
+                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: " + this.runningProcess.getBlockedTime());
+                    System.out.println();
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                 }
             }
+
+            for (Processo process : this.readyQueue) {
+                process.setWaitingTime();
+            }
+
             time++;
         }
         return 0;
