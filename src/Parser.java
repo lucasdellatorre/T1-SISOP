@@ -16,10 +16,11 @@ public class Parser {
     public int parseNextLine() {
         int pc = this.process.getPc();
         String[] instruction = this.process.getInstrucao(pc);
+        System.out.println("Intrução a ser parseada: " + instruction[0] + " " + instruction[1] + " PC atual: " + pc + " ACC atual: " + this.process.getAcc());
         String op = instruction[0];
         String value = instruction[1];
         int status = doOperation(Operacoes.valueOf(op.toUpperCase()), value);
-        this.process.setPc(++pc);
+        this.process.setPc(this.process.getPc() == pc ? pc + 1 : this.process.getPc());
         // System.out.println("PARSING -> " + pc + " " + this.process.getAcc());
         return status;
     }
@@ -28,7 +29,6 @@ public class Parser {
     // 1  -> Bloqueia
     // -1 -> Acaba
     private int doOperation(Operacoes op, String value) {
-        // System.out.println(op + " " + value);
         int acc = this.process.getAcc();
         Processo process = this.process;
 
