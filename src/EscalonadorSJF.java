@@ -2,11 +2,12 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.ListIterator;
 
 /*
     1- Cria os processos quando os recebe da Main, caso algum processo não inicie no tempo 0, ele só é criado em seu tempo
     2- Ordena a Fila de processos prontos
-    3- Eslacona o primeiro processo da fila
+    3- Escalona o primeiro processo da fila
     4- Vai lendo o processo até ele acabar ou até chegar um processo com tempo menor do que o tempo faltando do atual, caso isso aconte o 
     escalonador para de escalonar o atual e escalona o menor. O Atual entra de volta da fila.
 */
@@ -31,37 +32,35 @@ public class EscalonadorSJF extends Escalonador {
     @Override
     int run() {
         while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
-            LinkedList<Processo> aux;
-            aux = new LinkedList<Processo>(notStartedQueue);
-            for (Processo process : notStartedQueue) {
-                // System.out.println("Not Started Process: " + process.getPid());
+            ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
+            while (notStartedIterator.hasNext()) {
+                Processo process = notStartedIterator.next();
+                // retira o processo com o tempo atual da fila de 'not started' para fila de 'ready' 
                 if (process.getStartTime() == time) {
                     readyQueue.add(process);
-                    aux.remove(process);
+                    notStartedIterator.remove();
                     process.setEstado(Estado.READY);
                 }
             }
-            this.notStartedQueue = new LinkedList<>(aux);
-            
-            aux = new LinkedList<Processo>(blockedQueue);
-            for (Processo process : blockedQueue) {
-                // System.out.println("Blocked Process: " + process.getPid());
+            ListIterator<Processo> blockedIterator = blockedQueue.listIterator();
+            while (blockedIterator.hasNext()) {
+                Processo process = blockedIterator.next();
+                // decrementa o tempo de blockeado
                 process.setBlockedTime(process.getBlockedTime() - 1);
                 if (process.getBlockedTime() == 0) {
                     readyQueue.add(process);
-                    aux.remove(process);
+                    blockedIterator.remove();
                     process.setEstado(Estado.READY);
                 }
             }
 
-            this.blockedQueue = new LinkedList<>(aux);
             this.readyQueue = sortProcessesBySize(readyQueue);
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstTime = Integer.MAX_VALUE;
-                if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getIntuctionsSize();
+                if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getIntructionsSize();
 
-                if (this.runningProcess == null || this.runningProcess.getIntuctionsSize() > firstTime) {
+                if (this.runningProcess == null || this.runningProcess.getIntructionsSize() > firstTime) {
                     if (this.runningProcess != null) {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);
@@ -115,7 +114,7 @@ public class EscalonadorSJF extends Escalonador {
 
     public LinkedList<Processo> sortProcessesBySize(LinkedList<Processo> queue) {
         return new LinkedList<Processo>(queue.stream()
-        .sorted(Comparator.comparing((Processo p) -> (p.getIntuctionsSize() - p.getPc())))
+        .sorted(Comparator.comparing((Processo p) -> (p.getIntructionsSize() - p.getPc())))
         .collect(Collectors.toList())
         );
     }

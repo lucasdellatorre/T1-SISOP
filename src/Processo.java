@@ -115,7 +115,7 @@ public class Processo {
         return this.instrucoes.get(pos);
     }
 
-    public int getIntuctionsSize() {
+    public int getIntructionsSize() {
         return this.instrucoes.size();
     }
 
