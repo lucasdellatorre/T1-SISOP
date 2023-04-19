@@ -115,7 +115,7 @@ public class Processo {
         return this.instrucoes.get(pos);
     }
 
-    public int getIntuctionsSize() {
+    public int getIntructionsSize() {
         return this.instrucoes.size();
     }
 
@@ -209,6 +209,10 @@ public class Processo {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public void decreaseIOTime() {
+        this.blockedTime--;
     }
     
     public String toString() {
