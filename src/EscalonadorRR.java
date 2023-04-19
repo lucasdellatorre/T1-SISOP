@@ -16,6 +16,7 @@ import java.util.ListIterator;
 */
 public class EscalonadorRR extends Escalonador {
     private int time;
+    private int quantumTime;
     private LinkedList<Processo> blockedQueue;
     private LinkedList<Processo> readyQueue;
     private LinkedList<Processo> notStartedQueue;
@@ -30,11 +31,11 @@ public class EscalonadorRR extends Escalonador {
         this.finishedQueue = new LinkedList<>();
         this.runningProcess = null;
         this.parser = new Parser(null);
+        this.quantumTime = 0;
     }
 
     @Override
     int run() {
-        int quantumTime = 0;
         while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
             ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
             while (notStartedIterator.hasNext()) {
@@ -59,14 +60,16 @@ public class EscalonadorRR extends Escalonador {
                 }
             }
 
-            if (this.runningProcess != null && this.runningProcess.getQuantum() == quantumTime) {
-                quantumTime = 0;
+            if (this.runningProcess != null && this.runningProcess.getQuantum() == this.quantumTime) {
+                this.quantumTime = 0;
                 this.readyQueue.add(this.runningProcess);
                 this.runningProcess.setEstado(Estado.READY);
                 this.runningProcess = null;
             }
-
+            
             this.readyQueue = sortProcessesByPriority(this.readyQueue);
+
+            printSchedulerCurrentState();
 
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstPriority = 3;
@@ -78,17 +81,16 @@ public class EscalonadorRR extends Escalonador {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);
                     }
-                    quantumTime = 0;
+                    this.quantumTime = 0;
                     this.runningProcess = this.readyQueue.getFirst();
                     this.readyQueue.pop();
                     this.runningProcess.setEstado(Estado.RUNNING);
                     parser.setProcess(this.runningProcess);
                 }
 
-                printSchedulerCurrentState();
                 int status = parser.parseNextLine();
                 this.runningProcess.setProcessingTime();
-                quantumTime++;
+                this.quantumTime++;
                 // System.out.println("Status: " + status);
                 if (status == -1) {
                     // System.out.println("Entrei no -1");
@@ -96,17 +98,16 @@ public class EscalonadorRR extends Escalonador {
                     this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
                     this.finishedQueue.add(this.runningProcess);
                     this.runningProcess = null;
-                    quantumTime = 0;
+                    this.quantumTime = 0;
                 } else if (status == 1) {
                     // System.out.println("Entrei no 1");
                     this.runningProcess.setEstado(Estado.BLOCKED);
                     Random random = new Random();
                     this.runningProcess.setBlockedTime(random.nextInt(3) + 8);
-                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: " + this.runningProcess.getBlockedTime());
                     System.out.println();
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
-                    quantumTime = 0;
+                    this.quantumTime = 0;
                 }
             }
 
@@ -115,11 +116,13 @@ public class EscalonadorRR extends Escalonador {
             }
 
             time++;
+            System.out.println("\n\n");
         }
         return 1;
     }
 
     public void printSchedulerCurrentState() {
+        String runningProc = this.runningProcess != null ? Integer.toString(this.runningProcess.getPid()) : "null";
         System.out.println("===============================\nReady Queue: ");
         Util.printList(this.readyQueue);
         System.out.println("===============================\nBlocked Queue: ");
@@ -129,8 +132,8 @@ public class EscalonadorRR extends Escalonador {
         System.out.println("===============================\nFinished Queue:");
         Util.printList(this.finishedQueue);
         System.out.println("===============================");
-        System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
-        System.out.println("===============================\n\n");
+        System.out.println("Running Process: " + runningProc + " Time: " + time + " Quantum time: " + this.quantumTime);
+        System.out.println("===============================");
     }
 
     public LinkedList<Processo> sortProcessesByPriority(LinkedList<Processo> queue) {

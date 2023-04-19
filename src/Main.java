@@ -47,6 +47,12 @@ public class Main {
                 }
                 new EscalonadorRR(ll).run();
             } else {
+                for (Processo p : ll) {
+                    System.out.println(p);
+                    System.out.println("Digite o tempo de execução: ");
+                    int tempoExecucao = leInteiro(in);
+                    p.setExecutionTime(tempoExecucao);
+                }
                 new EscalonadorSJF(ll).run();
             }
             System.out.println("Finalizado!");
