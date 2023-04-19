@@ -2,6 +2,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.ListIterator;
 
 /*
   1- Recebe os processos da Main e os adiciona na notStartedQueue 
@@ -34,33 +35,29 @@ public class EscalonadorRR extends Escalonador {
     @Override
     int run() {
         int quantumTime = 0;
-        while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0
-                || this.runningProcess != null) {
-            LinkedList<Processo> aux;
-            aux = new LinkedList<Processo>(notStartedQueue);
-            for (Processo process : notStartedQueue) {
-                // System.out.println("Not Started Process: " + process.getPid());
+        while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
+            ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
+            while (notStartedIterator.hasNext()) {
+                Processo process = notStartedIterator.next();
+                // retira o processo com o tempo atual da fila de 'not started' para fila de 'ready' 
                 if (process.getStartTime() == time) {
                     readyQueue.add(process);
-                    aux.remove(process);
+                    notStartedIterator.remove();
                     process.setEstado(Estado.READY);
                 }
             }
 
-            this.notStartedQueue = new LinkedList<>(aux);
-
-            aux = new LinkedList<Processo>(blockedQueue);
-            for (Processo process : blockedQueue) {
-                // System.out.println("Blocked Process: " + process.getPid());
-                process.setBlockedTime(process.getBlockedTime() - 1);
-                if (process.getBlockedTime() == 0) {
+            ListIterator<Processo> blockedIterator = blockedQueue.listIterator();
+            while (blockedIterator.hasNext()) {
+                Processo process = blockedIterator.next();
+                process.decreaseIOTime();
+                boolean isIOFinished = process.getBlockedTime() == 0;
+                if (isIOFinished) {
                     readyQueue.add(process);
-                    aux.remove(process);
+                    blockedIterator.remove();
                     process.setEstado(Estado.READY);
                 }
             }
-
-            this.blockedQueue = new LinkedList<>(aux);
 
             if (this.runningProcess != null && this.runningProcess.getQuantum() == quantumTime) {
                 quantumTime = 0;
@@ -88,18 +85,7 @@ public class EscalonadorRR extends Escalonador {
                     parser.setProcess(this.runningProcess);
                 }
 
-                System.out.println("===============================\nReady Queue: ");
-                Util.printList(this.readyQueue);
-                System.out.println("===============================\nBlocked Queue: ");
-                Util.printList(this.blockedQueue);
-                System.out.println("===============================\nNot Started Queue:");
-                Util.printList(this.notStartedQueue);
-                System.out.println("===============================\nFinished Queue:");
-                Util.printList(this.finishedQueue);
-                System.out.println("===============================");
-                System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time
-                        + " Quantum time: " + quantumTime);
-                System.out.println("===============================\n\n");
+                printSchedulerCurrentState();
                 int status = parser.parseNextLine();
                 this.runningProcess.setProcessingTime();
                 quantumTime++;
@@ -131,6 +117,20 @@ public class EscalonadorRR extends Escalonador {
             time++;
         }
         return 1;
+    }
+
+    public void printSchedulerCurrentState() {
+        System.out.println("===============================\nReady Queue: ");
+        Util.printList(this.readyQueue);
+        System.out.println("===============================\nBlocked Queue: ");
+        Util.printList(this.blockedQueue);
+        System.out.println("===============================\nNot Started Queue:");
+        Util.printList(this.notStartedQueue);
+        System.out.println("===============================\nFinished Queue:");
+        Util.printList(this.finishedQueue);
+        System.out.println("===============================");
+        System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
+        System.out.println("===============================\n\n");
     }
 
     public LinkedList<Processo> sortProcessesByPriority(LinkedList<Processo> queue) {

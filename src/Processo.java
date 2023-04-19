@@ -210,6 +210,10 @@ public class Processo {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    public void decreaseIOTime() {
+        this.blockedTime--;
+    }
     
     public String toString() {
         return "pid: " + this.pid + " | state: " + this.estado + " | startTime: " + this.startTime;

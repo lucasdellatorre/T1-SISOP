@@ -45,9 +45,9 @@ public class EscalonadorSJF extends Escalonador {
             ListIterator<Processo> blockedIterator = blockedQueue.listIterator();
             while (blockedIterator.hasNext()) {
                 Processo process = blockedIterator.next();
-                // decrementa o tempo de blockeado
-                process.setBlockedTime(process.getBlockedTime() - 1);
-                if (process.getBlockedTime() == 0) {
+                process.decreaseIOTime();
+                boolean isIOFinished = process.getBlockedTime() == 0;
+                if (isIOFinished) {
                     readyQueue.add(process);
                     blockedIterator.remove();
                     process.setEstado(Estado.READY);
@@ -71,38 +71,29 @@ public class EscalonadorSJF extends Escalonador {
                     parser.setProcess(this.runningProcess);
                 }
 
-                System.out.println("===============================\nReady Queue: ");
-                Util.printList(this.readyQueue);
-                System.out.println("===============================\nBlocked Queue: ");
-                Util.printList(this.blockedQueue);
-                System.out.println("===============================\nNot Started Queue:");
-                Util.printList(this.notStartedQueue);
-                System.out.println("===============================\nFinished Queue:");
-                Util.printList(this.finishedQueue);
-                System.out.println("===============================");
-                System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
-                System.out.println("===============================\n\n");
+                printSchedulerCurrentState();
+
                 int status = parser.parseNextLine();
-                this.runningProcess.setProcessingTime();
-                // System.out.println("Status: " + status);
+              
+                this.runningProcess.setProcessingTime(); // incrementa o tempo de processamento
+
+                // se o programa acabou vai para a fila de terminados e contabiliza o turnarround (tempo que o programa de fato rodou)
                 if (status == -1) {
-                    // System.out.println("Entrei no -1");
                     this.runningProcess.setEstado(Estado.FINISHED);
                     this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
                     this.finishedQueue.add(this.runningProcess);
                     this.runningProcess = null;
+                // se o programa saiu para i/o
                 } else if (status == 1) {
-                    // System.out.println("Entrei no 1");
                     this.runningProcess.setEstado(Estado.BLOCKED);
-                    Random random = new Random();
-                    this.runningProcess.setBlockedTime(random.nextInt(3) + 8);
-                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: " + this.runningProcess.getBlockedTime());
-                    System.out.println();
+                    this.runningProcess.setBlockedTime(new Random().nextInt(3) + 8);
+                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: \n" + this.runningProcess.getBlockedTime());
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                 }
             }
 
+            // incrementa o tempo de espera de todos os processos que não foram executados ainda na fila de prontos
             for (Processo process : this.readyQueue) {
                 process.setWaitingTime();
             }
@@ -110,6 +101,20 @@ public class EscalonadorSJF extends Escalonador {
             time++;
         }
         return 0;
+    }
+    
+    public void printSchedulerCurrentState() {
+        System.out.println("===============================\nReady Queue: ");
+        Util.printList(this.readyQueue);
+        System.out.println("===============================\nBlocked Queue: ");
+        Util.printList(this.blockedQueue);
+        System.out.println("===============================\nNot Started Queue:");
+        Util.printList(this.notStartedQueue);
+        System.out.println("===============================\nFinished Queue:");
+        Util.printList(this.finishedQueue);
+        System.out.println("===============================");
+        System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
+        System.out.println("===============================\n\n");
     }
 
     public LinkedList<Processo> sortProcessesBySize(LinkedList<Processo> queue) {
