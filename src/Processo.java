@@ -17,6 +17,7 @@ public class Processo {
     private int quantum;
     private int priority;
     private int blockedTime;
+    private int executionTime;
     private Estado estado;
     private ArrayList<String[]> instrucoes;
     private HashMap<String, Integer> data;
@@ -34,6 +35,7 @@ public class Processo {
         this.turnarround = 0;
         this.processingTime = 0;
         this.waitingTime = 0;
+        this.executionTime = -1;
         leArquivo(file);
     }
 
@@ -48,6 +50,7 @@ public class Processo {
         this.turnarround = 0;
         this.processingTime = 0;
         this.waitingTime = 0;
+        this.executionTime = -1;
         leArquivo(file);
     }
 
@@ -113,10 +116,6 @@ public class Processo {
     public String[] getInstrucao(int pos) {
         // Util.printList(instrucoes);
         return this.instrucoes.get(pos);
-    }
-
-    public int getIntructionsSize() {
-        return this.instrucoes.size();
     }
 
     public int getLabel(String label) {
@@ -215,7 +214,23 @@ public class Processo {
         this.blockedTime--;
     }
     
+    public int getExecutionTime() {
+        return this.executionTime;
+    }
+
+    public void setExecutionTime(int executionTime) {
+        this.executionTime = executionTime;
+    }
+
+    public void decreaseExecutionTime() {
+        this.executionTime--;
+    }
+
     public String toString() {
-        return "pid: " + this.pid + " | state: " + this.estado + " | startTime: " + this.startTime;
+        String blocked = this.blockedTime <= 0 ? "" : " | blockedTime: " + Integer.toString(this.blockedTime);
+        String execution = this.executionTime == -1 ? "" : " | executionTime: " + Integer.toString(this.executionTime);
+        String priority = this.priority == -1 ? "" : " | priority: " + Integer.toString(this.priority);
+        String quantum = this.quantum == -1 ? "" : " | quantum: " + Integer.toString(this.quantum);
+        return "pid: " + this.pid + " | state: " + this.estado + " | startTime: " + this.startTime + priority + quantum + blocked + execution;
     }
 }
