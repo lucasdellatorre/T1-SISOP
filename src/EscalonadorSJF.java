@@ -60,7 +60,10 @@ public class EscalonadorSJF extends Escalonador {
                 int firstTime = Integer.MAX_VALUE;
                 if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getIntructionsSize();
 
+                // se o processo que esta executando tiver um tempo maior de execucao
+                // do que outro que esta na ready entra no if (se nao houver processo executando tambem entra)
                 if (this.runningProcess == null || this.runningProcess.getIntructionsSize() > firstTime) {
+                    // se o processo atual nao for o com tempo menor volta pra fila de ready
                     if (this.runningProcess != null) {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);

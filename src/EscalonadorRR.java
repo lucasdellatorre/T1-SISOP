@@ -86,6 +86,7 @@ public class EscalonadorRR extends Escalonador {
                 }
 
                 printSchedulerCurrentState();
+
                 int status = parser.parseNextLine();
                 this.runningProcess.setProcessingTime();
                 quantumTime++;
