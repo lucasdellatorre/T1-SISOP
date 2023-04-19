@@ -42,6 +42,7 @@ public class EscalonadorSJF extends Escalonador {
                     process.setEstado(Estado.READY);
                 }
             }
+
             ListIterator<Processo> blockedIterator = blockedQueue.listIterator();
             while (blockedIterator.hasNext()) {
                 Processo process = blockedIterator.next();
@@ -55,12 +56,14 @@ public class EscalonadorSJF extends Escalonador {
             }
 
             this.readyQueue = sortProcessesBySize(readyQueue);
+
+            printSchedulerCurrentState();
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstTime = Integer.MAX_VALUE;
-                if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getIntructionsSize();
+                if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getExecutionTime();
 
-                if (this.runningProcess == null || this.runningProcess.getIntructionsSize() > firstTime) {
+                if (this.runningProcess == null || this.runningProcess.getExecutionTime() > firstTime) {
                     if (this.runningProcess != null) {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);
@@ -71,14 +74,12 @@ public class EscalonadorSJF extends Escalonador {
                     parser.setProcess(this.runningProcess);
                 }
 
-                printSchedulerCurrentState();
-
                 int status = parser.parseNextLine();
-              
+                this.runningProcess.decreaseExecutionTime();
                 this.runningProcess.setProcessingTime(); // incrementa o tempo de processamento
 
                 // se o programa acabou vai para a fila de terminados e contabiliza o turnarround (tempo que o programa de fato rodou)
-                if (status == -1) {
+                if (status == -1 || this.runningProcess.getExecutionTime() == 0) {
                     this.runningProcess.setEstado(Estado.FINISHED);
                     this.runningProcess.setTurnarround((time + 1) - this.runningProcess.getStartTime());
                     this.finishedQueue.add(this.runningProcess);
@@ -87,7 +88,6 @@ public class EscalonadorSJF extends Escalonador {
                 } else if (status == 1) {
                     this.runningProcess.setEstado(Estado.BLOCKED);
                     this.runningProcess.setBlockedTime(new Random().nextInt(3) + 8);
-                    System.out.println("pid: " + this.runningProcess.getPid() + " Blocked Time: \n" + this.runningProcess.getBlockedTime());
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                 }
@@ -99,11 +99,13 @@ public class EscalonadorSJF extends Escalonador {
             }
 
             time++;
+            System.out.println("\n\n");
         }
         return 0;
     }
     
     public void printSchedulerCurrentState() {
+        String runningProc = this.runningProcess != null ? Integer.toString(this.runningProcess.getPid()) : "null";
         System.out.println("===============================\nReady Queue: ");
         Util.printList(this.readyQueue);
         System.out.println("===============================\nBlocked Queue: ");
@@ -113,13 +115,13 @@ public class EscalonadorSJF extends Escalonador {
         System.out.println("===============================\nFinished Queue:");
         Util.printList(this.finishedQueue);
         System.out.println("===============================");
-        System.out.println("Running Process: " + this.runningProcess.getPid() + " Time: " + time);
-        System.out.println("===============================\n\n");
+        System.out.println("Running Process: " + runningProc + " Time: " + time);
+        System.out.println("===============================");
     }
 
     public LinkedList<Processo> sortProcessesBySize(LinkedList<Processo> queue) {
         return new LinkedList<Processo>(queue.stream()
-        .sorted(Comparator.comparing((Processo p) -> (p.getIntructionsSize() - p.getPc())))
+        .sorted(Comparator.comparing((Processo p) -> (p.getExecutionTime())))
         .collect(Collectors.toList())
         );
     }
