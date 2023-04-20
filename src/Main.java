@@ -39,6 +39,7 @@ public class Main {
             String sn = in.nextLine().toLowerCase();
             boolean modoPassoAPasso = sn.equals("s") || sn.equals("sim");
 
+            LinkedList<Processo> processosFinalizados = new LinkedList<Processo>();
             if (politica.equals("rr")) {
                 for (Processo p : ll) {
                     System.out.println(p);
@@ -49,7 +50,7 @@ public class Main {
                     int prioridade = leInteiro(in);
                     p.setPriority(prioridade);
                 }
-                new EscalonadorRR(ll, modoPassoAPasso).run();
+                processosFinalizados = (LinkedList<Processo>) new EscalonadorRR(ll, modoPassoAPasso).run();
             } else {
                 for (Processo p : ll) {
                     System.out.println(p);
@@ -57,10 +58,10 @@ public class Main {
                     int tempoExecucao = leInteiro(in);
                     p.setExecutionTime(tempoExecucao);
                 }
-                new EscalonadorSJF(ll, modoPassoAPasso).run();
+                processosFinalizados = (LinkedList<Processo>) new EscalonadorSJF(ll, modoPassoAPasso).run();
             }
             System.out.println("Finalizado!");
-            for (Processo process : ll) {
+            for (Processo process : processosFinalizados) {
                 System.out.println("\n===============================");
                 System.out.println(process);
                 System.out.println("Waiting Time: " + process.getWaitingTime());

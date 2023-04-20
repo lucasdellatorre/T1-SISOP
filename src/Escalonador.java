@@ -8,5 +8,5 @@ public abstract class Escalonador {
     private Parser parser;
     private boolean modoPassoAPasso;
 
-    abstract int run();
+    abstract List<Processo> run();
 }

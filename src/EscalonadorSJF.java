@@ -1,5 +1,6 @@
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.ListIterator;
@@ -33,7 +34,7 @@ public class EscalonadorSJF extends Escalonador {
     }
 
     @Override
-    int run() {
+    List<Processo> run() {
         while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
             ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
             while (notStartedIterator.hasNext()) {
@@ -111,7 +112,7 @@ public class EscalonadorSJF extends Escalonador {
             time++;
             System.out.println("\n\n");
         }
-        return 0;
+        return this.finishedQueue;
     }
     
     public void printSchedulerCurrentState() {
