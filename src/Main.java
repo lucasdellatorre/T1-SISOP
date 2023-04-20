@@ -45,7 +45,7 @@ public class Main {
                     System.out.println("Digite o quantum: ");
                     int quantum = leInteiro(in);
                     p.setQuantum(quantum);
-                    System.out.println("Digite a prioridade sendo: 1 Alta - 2 Média - 3 Baixa");
+                    System.out.println("Digite a prioridade sendo: 0 Alta - 1 Média - 2 Baixa");
                     int prioridade = leInteiro(in);
                     p.setPriority(prioridade);
                 }

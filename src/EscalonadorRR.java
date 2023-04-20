@@ -82,7 +82,7 @@ public class EscalonadorRR extends Escalonador {
             }
 
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
-                int firstPriority = 3;
+                int firstPriority = 2;
                 if (this.readyQueue.size() > 0)
                     firstPriority = this.readyQueue.getFirst().getPriority();
 
