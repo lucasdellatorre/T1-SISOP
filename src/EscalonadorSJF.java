@@ -68,19 +68,13 @@ public class EscalonadorSJF extends Escalonador {
             this.readyQueue = sortProcessesBySize(readyQueue);
 
             printSchedulerCurrentState();
-
-            if (modoPassoAPasso) {
-              System.out.println("*****************************************");
-              System.out.println("* digite 'enter' para proxima execucao: *");
-              System.out.println("*****************************************");
-              new Scanner(System.in).nextLine();
-            }
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstTime = Integer.MAX_VALUE;
                 if (this.readyQueue.size() > 0) firstTime = this.readyQueue.getFirst().getExecutionTime();
 
                 if (this.runningProcess == null || this.runningProcess.getExecutionTime() > firstTime) {
+                    int desescalonando = this.runningProcess != null ? this.runningProcess.getPid() : -1;
                     if (this.runningProcess != null) {
                         this.readyQueue.add(this.runningProcess);
                         this.runningProcess.setEstado(Estado.READY);
@@ -89,6 +83,7 @@ public class EscalonadorSJF extends Escalonador {
                     this.readyQueue.pop();
                     this.runningProcess.setEstado(Estado.RUNNING);
                     parser.setProcess(this.runningProcess);
+                    System.out.println("Escalonando: " + (desescalonando == -1 ? "null" : desescalonando) + " -> " + this.runningProcess.getPid());
                 }
 
                 int status = parser.parseNextLine();
@@ -120,6 +115,12 @@ public class EscalonadorSJF extends Escalonador {
             }
 
             time++;
+            if (modoPassoAPasso) {
+                System.out.println("*****************************************");
+                System.out.println("* digite 'enter' para proxima execucao: *");
+                System.out.println("*****************************************");
+                new Scanner(System.in).nextLine();
+            }
             System.out.println("\n\n");
         }
         return this.finishedQueue;
