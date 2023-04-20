@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.ListIterator;
+import java.util.Scanner;
 
 /*
   1- Recebe os processos da Main e os adiciona na notStartedQueue 
@@ -23,8 +24,9 @@ public class EscalonadorRR extends Escalonador {
     private LinkedList<Processo> finishedQueue;
     private Processo runningProcess;
     private Parser parser;
+    private boolean modoPassoAPasso;
 
-    public EscalonadorRR(LinkedList<Processo> processes) {
+    public EscalonadorRR(LinkedList<Processo> processes, boolean modoPassoAPasso) {
         this.readyQueue = new LinkedList<>();
         this.notStartedQueue = processes;
         this.blockedQueue = new LinkedList<>();
@@ -32,6 +34,7 @@ public class EscalonadorRR extends Escalonador {
         this.runningProcess = null;
         this.parser = new Parser(null);
         this.quantumTime = 0;
+        this.modoPassoAPasso = modoPassoAPasso;
     }
 
     @Override
@@ -70,6 +73,13 @@ public class EscalonadorRR extends Escalonador {
             this.readyQueue = sortProcessesByPriority(this.readyQueue);
 
             printSchedulerCurrentState();
+
+            if (modoPassoAPasso) {
+              System.out.println("*****************************************");
+              System.out.println("* digite 'enter' para proxima execucao: *");
+              System.out.println("*****************************************");
+              new Scanner(System.in).nextLine();
+            }
 
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstPriority = 3;

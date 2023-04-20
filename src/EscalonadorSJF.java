@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.ListIterator;
+import java.util.Scanner;
 
 /*
     1- Cria os processos quando os recebe da Main, caso algum processo não inicie no tempo 0, ele só é criado em seu tempo
@@ -19,14 +20,16 @@ public class EscalonadorSJF extends Escalonador {
     private LinkedList<Processo> finishedQueue;
     private Processo runningProcess;
     private Parser parser;
+    private boolean modoPassoAPasso;
 
-    public EscalonadorSJF(LinkedList<Processo> processes) {
+    public EscalonadorSJF(LinkedList<Processo> processes, boolean modoPassoAPasso) {
         this.readyQueue = new LinkedList<>();
         this.blockedQueue = new LinkedList<>();
         this.finishedQueue = new LinkedList<>();
         this.notStartedQueue = processes;
         this.runningProcess = null;
         this.parser = new Parser(null);
+        this.modoPassoAPasso = modoPassoAPasso;
     }
 
     @Override
@@ -58,6 +61,13 @@ public class EscalonadorSJF extends Escalonador {
             this.readyQueue = sortProcessesBySize(readyQueue);
 
             printSchedulerCurrentState();
+
+            if (modoPassoAPasso) {
+              System.out.println("*****************************************");
+              System.out.println("* digite 'enter' para proxima execucao: *");
+              System.out.println("*****************************************");
+              new Scanner(System.in).nextLine();
+            }
             
             if (this.readyQueue.size() != 0 || this.runningProcess != null) {
                 int firstTime = Integer.MAX_VALUE;

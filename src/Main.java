@@ -35,6 +35,10 @@ public class Main {
 
             String politica = setPolitica(in);
 
+            System.out.println("Gostaria de executar o algoritmo no modo passo a passo? (S/N): ");
+            String sn = in.nextLine().toLowerCase();
+            boolean modoPassoAPasso = sn.equals("s") || sn.equals("sim");
+
             if (politica.equals("rr")) {
                 for (Processo p : ll) {
                     System.out.println(p);
@@ -45,7 +49,7 @@ public class Main {
                     int prioridade = leInteiro(in);
                     p.setPriority(prioridade);
                 }
-                new EscalonadorRR(ll).run();
+                new EscalonadorRR(ll, modoPassoAPasso).run();
             } else {
                 for (Processo p : ll) {
                     System.out.println(p);
@@ -53,7 +57,7 @@ public class Main {
                     int tempoExecucao = leInteiro(in);
                     p.setExecutionTime(tempoExecucao);
                 }
-                new EscalonadorSJF(ll).run();
+                new EscalonadorSJF(ll, modoPassoAPasso).run();
             }
             System.out.println("Finalizado!");
             for (Processo process : ll) {

@@ -6,6 +6,7 @@ public abstract class Escalonador {
     private List<Processo> notStartedQueue;
     private Processo running;
     private Parser parser;
+    private boolean modoPassoAPasso;
 
     abstract int run();
 }
