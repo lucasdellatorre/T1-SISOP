@@ -19,6 +19,7 @@ public class Processo {
     private int blockedTime;
     private int executionTime;
     private Estado estado;
+    private HashMap<Estado, Integer> statesTime;
     private ArrayList<String[]> instrucoes;
     private HashMap<String, Integer> data;
     private HashMap<String, Integer> labels;
@@ -36,6 +37,11 @@ public class Processo {
         this.processingTime = 0;
         this.waitingTime = 0;
         this.executionTime = -1;
+        this.statesTime = new HashMap<>();
+        this.statesTime.put(Estado.RUNNING, 0);
+        this.statesTime.put(Estado.BLOCKED, 0);
+        this.statesTime.put(Estado.READY, 0);
+        this.statesTime.put(Estado.FINISHED, 0);
         leArquivo(file);
     }
 
@@ -51,6 +57,11 @@ public class Processo {
         this.processingTime = 0;
         this.waitingTime = 0;
         this.executionTime = -1;
+        this.statesTime = new HashMap<>();
+        this.statesTime.put(Estado.RUNNING, 0);
+        this.statesTime.put(Estado.BLOCKED, 0);
+        this.statesTime.put(Estado.READY, 0);
+        this.statesTime.put(Estado.FINISHED, 0);
         leArquivo(file);
     }
 
@@ -224,6 +235,17 @@ public class Processo {
 
     public void decreaseExecutionTime() {
         this.executionTime--;
+    }
+
+    public void increaseActualStateTime() {
+        if (this.estado != Estado.NOT_STARTED) {
+            int stateTime = this.statesTime.get(this.estado) == null ? 0 : this.statesTime.get(this.estado) ;
+            this.statesTime.put(this.estado, stateTime + 1);
+        }
+    }
+
+    public HashMap<Estado, Integer> getStatesTime() {
+        return this.statesTime;
     }
 
     public String toString() {

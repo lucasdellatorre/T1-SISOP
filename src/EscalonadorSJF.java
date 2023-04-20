@@ -36,6 +36,10 @@ public class EscalonadorSJF extends Escalonador {
     @Override
     List<Processo> run() {
         while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
+            for (Processo process : this.finishedQueue) {
+                process.increaseActualStateTime();
+            }
+
             ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
             while (notStartedIterator.hasNext()) {
                 Processo process = notStartedIterator.next();
@@ -56,6 +60,8 @@ public class EscalonadorSJF extends Escalonador {
                     readyQueue.add(process);
                     blockedIterator.remove();
                     process.setEstado(Estado.READY);
+                } else {
+                    process.increaseActualStateTime();
                 }
             }
 
@@ -86,7 +92,11 @@ public class EscalonadorSJF extends Escalonador {
                 }
 
                 int status = parser.parseNextLine();
+                for (Processo process : this.readyQueue) {
+                    process.increaseActualStateTime();
+                }
                 this.runningProcess.decreaseExecutionTime();
+                this.runningProcess.increaseActualStateTime();
                 this.runningProcess.setProcessingTime(); // incrementa o tempo de processamento
 
                 // se o programa acabou vai para a fila de terminados e contabiliza o turnarround (tempo que o programa de fato rodou)
@@ -98,7 +108,7 @@ public class EscalonadorSJF extends Escalonador {
                 // se o programa saiu para i/o
                 } else if (status == 1) {
                     this.runningProcess.setEstado(Estado.BLOCKED);
-                    this.runningProcess.setBlockedTime(new Random().nextInt(3) + 8);
+                    this.runningProcess.setBlockedTime(new Random().nextInt(4) + 8);
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;
                 }

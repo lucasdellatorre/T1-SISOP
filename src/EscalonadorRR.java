@@ -41,6 +41,10 @@ public class EscalonadorRR extends Escalonador {
     @Override
     List<Processo> run() {
         while (this.readyQueue.size() > 0 || this.blockedQueue.size() > 0 || notStartedQueue.size() > 0 || this.runningProcess != null) {
+            for (Processo process : this.finishedQueue) {
+                process.increaseActualStateTime();
+            }
+            
             ListIterator<Processo> notStartedIterator = notStartedQueue.listIterator();
             while (notStartedIterator.hasNext()) {
                 Processo process = notStartedIterator.next();
@@ -61,6 +65,8 @@ public class EscalonadorRR extends Escalonador {
                     readyQueue.add(process);
                     blockedIterator.remove();
                     process.setEstado(Estado.READY);
+                } else {
+                    process.increaseActualStateTime();
                 }
             }
 
@@ -100,7 +106,11 @@ public class EscalonadorRR extends Escalonador {
                 }
 
                 int status = parser.parseNextLine();
+                for (Processo process : this.readyQueue) {
+                    process.increaseActualStateTime();
+                }
                 this.runningProcess.setProcessingTime();
+                this.runningProcess.increaseActualStateTime();
                 this.quantumTime++;
                 // System.out.println("Status: " + status);
                 if (status == -1) {
@@ -114,7 +124,7 @@ public class EscalonadorRR extends Escalonador {
                     // System.out.println("Entrei no 1");
                     this.runningProcess.setEstado(Estado.BLOCKED);
                     Random random = new Random();
-                    this.runningProcess.setBlockedTime(random.nextInt(3) + 8);
+                    this.runningProcess.setBlockedTime(random.nextInt(4) + 8);
                     System.out.println();
                     this.blockedQueue.add(this.runningProcess);
                     this.runningProcess = null;

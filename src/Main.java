@@ -67,6 +67,7 @@ public class Main {
                 System.out.println("Waiting Time: " + process.getWaitingTime());
                 System.out.println("Processing Time: " + process.getProcessingTime());
                 System.out.println("Turnaround Time: " + process.getTurnarround());
+                Util.printHashMap(process.getStatesTime());
                 System.out.println("===============================\n");
             }
             System.out.println("Gostaria de rodar novamente?: (s/n)");
