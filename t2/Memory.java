@@ -23,7 +23,6 @@ public class Memory {
     }
 
     public void alloc(Process process) throws InsufficientMemoryException {
-        System.out.println("process.pid" + process.pid);
         if (process.size > this.currentMemory ) {
             throw new InsufficientMemoryException();
         }
