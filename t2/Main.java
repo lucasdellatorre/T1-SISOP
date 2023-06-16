@@ -1,18 +1,13 @@
+import java.io.File;
+import java.util.ArrayList;
+
 public class Main {
     public static void main(String[] args) {
         new Main().run();
     }
     
     public void run() {
-      try {
-        new VariablePartition(4);
-        something();
-      } catch (InsufficientMemoryException e) {
-        System.err.println(e.getMessage());
-      }
+        ArrayList<Request> requests = Util.readFile(new File("./examples/ex1.txt"));
+        requests.forEach(System.out::println);
     }
-
-    public void something() throws InsufficientMemoryException {
-      throw new InsufficientMemoryException();
-  }
 }
