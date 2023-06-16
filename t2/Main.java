@@ -8,7 +8,7 @@ public class Main {
     
     public void run() {
         ArrayList<Request> requests = Util.readFile(new File("./examples/worstfit.txt"));
-        Memory mem = new Memory(64);
+        Memory mem = new Memory(16);
         new VariablePartition(mem, requests).execute();
     }
 }

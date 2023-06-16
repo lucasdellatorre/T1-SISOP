@@ -47,11 +47,28 @@ public class Memory {
 
         worstHole.size -= process.size;
         currentMemory -= process.size;
+        System.out.println("Process add: " + process + ", currentMem: " + currentMemory);
         partitions.add(process);
     }
 
     public void free(String pid) {
+        Process process = null;
+        for (Partition partition : partitions) {
+            if (partition instanceof Process) {
+                Process candidateProcess = (Process) partition;
+                if (candidateProcess.pid.equals(pid)) {
+                    process = (Process) partition;
+                }
+            }
+        }
+        if (process == null) {
+            System.err.println("Memory: Process not found");
+            return;
+        }
 
+        currentMemory += process.size;
+        System.out.println("Process removed: " + process + ", currentMem: " + currentMemory);
+        partitions.remove(process);
     }
 
     public void setPolicy(String policy) {
@@ -59,6 +76,8 @@ public class Memory {
     }
 
     public void printMemoryState() {
+        System.out.println("=============== MEMORY STATE ================");
         partitions.forEach(System.out::println);
+        System.out.println("=============================================");
     }
 }

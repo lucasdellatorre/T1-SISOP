@@ -16,7 +16,10 @@ public class VariablePartition {
                     memory.alloc(new Process(request.getPid(), request.getPSize()));
                 } else if (request.getCommand() == "OUT") {
                     memory.free(request.getPid());
+                } else {
+                    System.err.println("VariablePartition: command name error");
                 }
+                memory.printMemoryState();
             }
         } catch (InsufficientMemoryException ime) {
             System.err.println(ime.getMessage());
@@ -24,6 +27,5 @@ public class VariablePartition {
             System.err.println(e.getMessage());
         }
 
-        memory.printMemoryState();
     }
 }
