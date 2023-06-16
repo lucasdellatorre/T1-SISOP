@@ -7,8 +7,18 @@ public class Main {
     }
     
     public void run() {
-        ArrayList<Request> requests = Util.readFile(new File("./examples/worstfit.txt"));
+        test1();
+    }
+
+    public void test1() {
+        ArrayList<Request> requests = Util.readFile(new File("./examples/ex1.txt"));
         Memory mem = new Memory(16);
+        new VariablePartition(mem, requests).execute();
+    }
+
+    public void test2() {
+        ArrayList<Request> requests = Util.readFile(new File("./examples/worstfit.txt"));
+        Memory mem = new Memory(64);
         new VariablePartition(mem, requests).execute();
     }
 }
