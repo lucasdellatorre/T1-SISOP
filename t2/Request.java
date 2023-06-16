@@ -14,4 +14,16 @@ public class Request {
         if (command == "IN") aux = ", " + pSize;
         return command + "(" + pid + aux + ")";
     }
+
+    public String getCommand() {
+        return this.command;
+    }
+
+    public String getPid() {
+        return this.pid;
+    }
+
+    public int getPSize() {
+        return this.pSize;
+    }
 }
