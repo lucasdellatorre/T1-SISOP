@@ -7,7 +7,8 @@ public class Main {
     }
     
     public void run() {
-        ArrayList<Request> requests = Util.readFile(new File("./examples/ex1.txt"));
-        requests.forEach(System.out::println);
+        ArrayList<Request> requests = Util.readFile(new File("./examples/worstfit.txt"));
+        Memory mem = new Memory(64);
+        new VariablePartition(mem, requests).execute();
     }
 }

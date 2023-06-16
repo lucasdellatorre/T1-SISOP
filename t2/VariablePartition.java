@@ -10,12 +10,20 @@ public class VariablePartition {
     }
 
     public void execute() {
-        for (Request request : requests) {
-            if (request.getCommand() == "IN") {
-                memory.alloc(request.getPid(), request.getPSize());
-            } else if (request.getCommand() == "OUT") {
-                memory.free(request.getPid());
+        try {
+            for (Request request : requests) {
+                if (request.getCommand() == "IN") {
+                    memory.alloc(new Process(request.getPid(), request.getPSize()));
+                } else if (request.getCommand() == "OUT") {
+                    memory.free(request.getPid());
+                }
             }
+        } catch (InsufficientMemoryException ime) {
+            System.err.println(ime.getMessage());
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
         }
+
+        memory.printMemoryState();
     }
 }
