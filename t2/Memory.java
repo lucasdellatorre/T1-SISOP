@@ -27,6 +27,20 @@ public class Memory {
             throw new InsufficientMemoryException();
         }
 
+        switch (this.policy) {
+            case "worst-fit":
+                worstFit(process);
+                break;
+            case "circular-fit":
+                circularFit(process);
+                break;
+            default:
+                System.err.println("Memory allocation: Wrong Policy Name");
+                break;
+        }
+    }
+
+    private void worstFit(Process process) {
         int worstPartitionSize = 0;
         Hole worstHole = null;
 
@@ -50,6 +64,8 @@ public class Memory {
         System.out.println("Process add: " + process + ", currentMem: " + currentMemory);
         partitions.add(process);
     }
+
+    private void circularFit(Process process) { }
 
     public void free(String pid) {
         Process process = null;
