@@ -59,10 +59,12 @@ public class Memory {
             return;
         }
 
+        int holeIndex = partitions.indexOf(worstHole);
+
         worstHole.size -= process.size;
         currentMemory -= process.size;
         System.out.println("Process add: " + process + ", currentMem: " + currentMemory);
-        partitions.add(process);
+        partitions.add(holeIndex, process);
     }
 
     private void circularFit(Process process) { }
@@ -81,10 +83,30 @@ public class Memory {
             System.err.println("Memory: Process not found");
             return;
         }
+        
+        int processIndex = partitions.indexOf(process);
+        partitions.remove(process);
+        
+        Partition leftPartition = processIndex > 0 ? partitions.get(processIndex - 1) : null;
+        Partition rightPartition = processIndex < partitions.size() ? partitions.get(processIndex) : null;
+        
+        if (leftPartition instanceof Hole && rightPartition instanceof Hole) {
+            Hole leftHole = (Hole) leftPartition;
+            Hole rightHole = (Hole) rightPartition;
+            leftHole.size += process.size + rightHole.size;
+            partitions.remove(rightHole);
+        } else if (leftPartition instanceof Hole) {
+            Hole leftHole = (Hole) leftPartition;
+            leftHole.size += process.size;
+        } else if (rightPartition instanceof Hole) {
+            Hole rightHole = (Hole) rightPartition;
+            rightHole.size += process.size;
+        } else {
+            partitions.add(processIndex, new Hole(process.size));
+        }
 
         currentMemory += process.size;
         System.out.println("Process removed: " + process + ", currentMem: " + currentMemory);
-        partitions.remove(process);
     }
 
     public void setPolicy(String policy) {
