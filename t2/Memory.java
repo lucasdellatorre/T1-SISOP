@@ -5,8 +5,9 @@ public class Memory {
     private final int MEMORY_SIZE;
     private int currentMemory;
     private String policy;
+    private int nextIndex = 0;
 
-    public Memory (int memorySize) {
+    public Memory(int memorySize) {
         MEMORY_SIZE = memorySize;
         currentMemory = MEMORY_SIZE;
         partitions = new LinkedList<>();
@@ -14,7 +15,7 @@ public class Memory {
         policy = "worst-fit";
     }
 
-    public Memory (int memSize, String policy) {
+    public Memory(int memSize, String policy) {
         MEMORY_SIZE = memSize;
         currentMemory = MEMORY_SIZE;
         partitions = new LinkedList<>();
@@ -23,7 +24,7 @@ public class Memory {
     }
 
     public void alloc(Process process) throws InsufficientMemoryException {
-        if (process.size > this.currentMemory ) {
+        if (process.size > this.currentMemory) {
             throw new InsufficientMemoryException();
         }
 
@@ -60,14 +61,52 @@ public class Memory {
         }
 
         int holeIndex = partitions.indexOf(worstHole);
-
+    
         worstHole.size -= process.size;
+        if (worstHole.size == 0) {
+            partitions.remove(worstHole);
+        }
         currentMemory -= process.size;
         System.out.println("Process add: " + process + ", currentMem: " + currentMemory);
         partitions.add(holeIndex, process);
     }
 
-    private void circularFit(Process process) { }
+    private void circularFit(Process process) {
+        int index = nextIndex;
+        Hole hole = null;
+        System.out.println("index: " + index);
+        do {
+            Partition partition = partitions.get(index);
+            if (partition instanceof Hole) {
+                Hole currentHole = (Hole) partition;
+                if (currentHole.size >= process.size) {
+                    hole = currentHole;
+                    break;
+                }
+            }
+            if(index == partitions.size() - 1) {
+                index = 0;
+            } else {
+                index++;
+            }
+            System.out.println("index: " + index);
+        } while (index != nextIndex);
+
+        if (hole == null) {
+            System.err.println("Memory: EMPTY HOLE");
+            return;
+        }
+
+        hole.size -= process.size;
+        currentMemory -= process.size;
+        System.out.println("Process add: " + process + ", currentMem: " + currentMemory);
+        partitions.add(index, process);
+        if (hole.size == 0) {
+            partitions.remove(hole);
+        }
+        nextIndex = (index + 1 == partitions.size()) ? 0 : index + 1;
+        System.out.println("nextIndex: " + nextIndex);
+    }
 
     public void free(String pid) {
         Process process = null;
@@ -83,24 +122,33 @@ public class Memory {
             System.err.println("Memory: Process not found");
             return;
         }
-        
+
         int processIndex = partitions.indexOf(process);
         partitions.remove(process);
-        
+
         Partition leftPartition = processIndex > 0 ? partitions.get(processIndex - 1) : null;
         Partition rightPartition = processIndex < partitions.size() ? partitions.get(processIndex) : null;
-        
+
         if (leftPartition instanceof Hole && rightPartition instanceof Hole) {
             Hole leftHole = (Hole) leftPartition;
             Hole rightHole = (Hole) rightPartition;
             leftHole.size += process.size + rightHole.size;
             partitions.remove(rightHole);
+            if (processIndex < nextIndex) {
+                nextIndex-=2;
+            }
         } else if (leftPartition instanceof Hole) {
             Hole leftHole = (Hole) leftPartition;
             leftHole.size += process.size;
+            if (processIndex < nextIndex) {
+                nextIndex--;
+            }
         } else if (rightPartition instanceof Hole) {
             Hole rightHole = (Hole) rightPartition;
             rightHole.size += process.size;
+            if (processIndex < nextIndex) {
+                nextIndex--;
+            }
         } else {
             partitions.add(processIndex, new Hole(process.size));
         }
