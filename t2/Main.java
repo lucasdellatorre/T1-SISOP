@@ -7,7 +7,7 @@ public class Main {
     }
     
     public void run() {
-        test1();
+        test3();
     }
 
     public void test1() {
@@ -15,10 +15,16 @@ public class Main {
         Memory mem = new Memory(16);
         new VariablePartition(mem, requests).execute();
     }
-
+    
     public void test2() {
         ArrayList<Request> requests = Util.readFile(new File("./examples/ex1.txt"));
         Memory mem = new Memory(64);
+        new VariablePartition(mem, requests).execute();
+    }
+
+    public void test3() {
+        ArrayList<Request> requests = Util.readFile(new File("./examples/circularfit.txt"));
+        Memory mem = new Memory(16, "circular-fit");
         new VariablePartition(mem, requests).execute();
     }
 }
