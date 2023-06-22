@@ -16,14 +16,14 @@ public class Main {
         do {
             System.out.println("Digite o caminho do arquivo (exemplo: ./examples/worstfit.txt): ");
             String caminho = in.nextLine();
-            ArrayList<Request> requests = Util.readFile(new File("./examples/worstfit.txt"));
+            ArrayList<Request> requests = Util.readFile(new File(caminho));
             System.out.println("Digite o tamanho da memoria: ");
             int memorySize = leInteiro(in);
             if (!Util.isPowerOfTwo(memorySize)) {
                 System.out.println("Invalid memory size, must be a power of 2");
                 System.exit(1);
             }
-            System.out.println("Digite a politica de alocacao ( worst-fit | circle-fit | buddy ): ");
+            System.out.println("Digite a politica de alocacao ( worst-fit | circular-fit | buddy ): ");
             String politica = in.nextLine().toLowerCase().trim();
             if (politica.equals("buddy")) {
                 new Buddy(new BuddyMem(memorySize), requests).execute();
