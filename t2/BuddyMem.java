@@ -23,10 +23,11 @@ public class BuddyMem {
     fragInternaTotal = 0;
   }
 
-  public void insert( int size, String pid ) {
+  public void insert( int size, String pid ) throws InsufficientMemoryException {
     Node node = insert( root, size, pid );
     if (node == null) {
       System.err.println("Memory: EMPTY PARTITION");
+        throw new InsufficientMemoryException();
     }
   }
 
@@ -103,15 +104,15 @@ public class BuddyMem {
     }
   }
 
-  public void print( )  { 
-    print( root, "" ); 
+  public void printMemoryState() { 
+    printMemoryState( root, "" ); 
     System.out.println("Fragmentacao Interna: " + fragInternaTotal + "\n");
   }
 
-  private void print( Node n, String s ) {
+  private void printMemoryState( Node n, String s ) {
     if ( n == null ) return;
-    print( n.dir, s + "    ");
+    printMemoryState( n.dir, s + "    ");
     System.out.print( s + n.size + "-" + n.isEmpty + "(" + n.pid + "-" + n.ocupationSize + ")" + "\n" );
-    print( n.esq, s + "    " );
+    printMemoryState( n.esq, s + "    " );
   }
 }
