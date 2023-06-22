@@ -27,10 +27,20 @@ public class Main {
         Memory mem = new Memory(16, "circular-fit");
         new VariablePartition(mem, requests).execute();
     }
-
+    
     public void test4() {
-        ArrayList<Request> requests = Util.readFile(new File("./examples/circularfit.txt"));
-        Buddy bud = new Buddy(16);
-        bud.allocate(8);
+            ArrayList<Request> requests = Util.readFile(new File("./examples/ex1.txt"));
+            BuddyMem mem = new BuddyMem(64);
+            for (Request request : requests) {
+                    if (request.getCommand() == "IN") {
+                        mem.insert(request.getPSize(), request.getPid());
+                    } else if (request.getCommand() == "OUT") {
+                        mem.remove(request.getPid());
+                    } else {
+                        System.err.println("VariablePartition: command name error");
+                    }
+                    mem.print();
+                    System.out.println();
+            }
     }
 }
