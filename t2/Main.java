@@ -7,7 +7,7 @@ public class Main {
     }
     
     public void run() {
-        test3();
+        test4();
     }
 
     public void test1() {
@@ -24,7 +24,13 @@ public class Main {
 
     public void test3() {
         ArrayList<Request> requests = Util.readFile(new File("./examples/circularfit.txt"));
-        Memory mem = new Memory(11, "circular-fit");
+        Memory mem = new Memory(16, "circular-fit");
         new VariablePartition(mem, requests).execute();
+    }
+
+    public void test4() {
+        ArrayList<Request> requests = Util.readFile(new File("./examples/circularfit.txt"));
+        Buddy bud = new Buddy(16);
+        bud.allocate(8);
     }
 }
