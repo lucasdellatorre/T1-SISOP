@@ -24,7 +24,7 @@ public class Main {
 
     public void test3() {
         ArrayList<Request> requests = Util.readFile(new File("./examples/circularfit.txt"));
-        Memory mem = new Memory(16, "circular-fit");
+        Memory mem = new Memory(11, "circular-fit");
         new VariablePartition(mem, requests).execute();
     }
 }

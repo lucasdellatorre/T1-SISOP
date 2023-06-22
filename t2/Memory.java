@@ -9,6 +9,7 @@ public class Memory {
 
     public Memory(int memorySize) {
         MEMORY_SIZE = memorySize;
+        if (!validateMemorySize(MEMORY_SIZE)) throw new Error("Invalid memory size, must be a pow of 2");
         currentMemory = MEMORY_SIZE;
         partitions = new LinkedList<>();
         partitions.add(new Hole(MEMORY_SIZE));
@@ -17,10 +18,15 @@ public class Memory {
 
     public Memory(int memSize, String policy) {
         MEMORY_SIZE = memSize;
+        if (!validateMemorySize(MEMORY_SIZE)) throw new Error("Invalid memory size, must be a pow of 2");
         currentMemory = MEMORY_SIZE;
         partitions = new LinkedList<>();
         partitions.add(new Hole(MEMORY_SIZE));
         this.policy = policy;
+    }
+
+    private boolean validateMemorySize(int x) {
+        return (x != 0) && ((x & (x - 1)) == 0);
     }
 
     public void alloc(Process process) throws InsufficientMemoryException {
